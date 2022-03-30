@@ -28,7 +28,7 @@ class TestUtils(TestCase):
         self.assertEqual(len(data.keys()), 2)
         self.assertEqual(list(data.keys()), [datetime(2010, 1, 1), datetime(2010, 1, 2)])
 
-    def test_get_datet_from_filename(self):
+    def test_get_date_from_filename(self):
         date = get_date_from_filename("roti0010.10f")
         self.assertEqual(date, datetime(2010, 1, 1))
 
