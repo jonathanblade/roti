@@ -3,7 +3,7 @@ import numpy as np
 from datetime import datetime
 from unittest import TestCase
 
-from ..utils import read_roti
+from ..utils import read_roti, load_data
 
 class TestUtils(TestCase):
 
@@ -22,3 +22,8 @@ class TestUtils(TestCase):
         self.assertEqual(date, datetime(2020, 7, 10))
         self.assertEqual(lats.tolist(), list(range(89, 50, -2)))
         self.assertEqual(rows.shape, (20, 180))
+
+    def test_load_data(self):
+        data = load_data(datetime(2010, 1, 1), datetime(2010, 1, 3))
+        self.assertEqual(len(data.keys()), 2)
+        self.assertEqual(list(data.keys()), [datetime(2010, 1, 1), datetime(2010, 1, 2)])

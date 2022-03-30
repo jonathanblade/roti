@@ -1,10 +1,10 @@
+import os
 import numpy as np
 
 from datetime import datetime
 
-
-def read_roti(filename):
-    with open(filename, 'rb') as f:
+def read_roti(fpath):
+    with open(fpath, 'rb') as f:
         header_read = False
         date = None
         lats = []
@@ -28,6 +28,14 @@ def read_roti(filename):
             line = f.readline()
         return date, np.array(lats), np.array(rows)
 
-
 def load_data(start_date = None, end_date = None):
-    pass
+    data = {}
+    if start_date is None:
+        start_date = datetime(2010, 1, 1)
+    if end_date is None:
+        end_date = datetime.now()
+    for fname in sorted(os.listdir("/content/roti/data/")):
+        date, lats, rows = read_roti("/content/roti/data/" + fname)
+        if date >= start_date and date < end_date:
+            data[date] = rows
+    return data
