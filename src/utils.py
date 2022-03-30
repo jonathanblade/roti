@@ -35,7 +35,13 @@ def load_data(start_date = None, end_date = None):
     if end_date is None:
         end_date = datetime.now()
     for fname in sorted(os.listdir("/content/roti/data/")):
-        date, lats, rows = read_roti("/content/roti/data/" + fname)
+        date = get_date_from_filename(fname)
         if date >= start_date and date < end_date:
+            _, lats, rows = read_roti("/content/roti/data/" + fname)
             data[date] = rows
     return data
+
+def get_date_from_filename(fname):
+    doy = int(fname[4:7])
+    year = 2000 + int(fname[9:11])
+    return datetime(year, 1, 1) + datetime.timedelta(doy - 1)
