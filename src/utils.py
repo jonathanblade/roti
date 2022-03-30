@@ -37,7 +37,8 @@ def load_data(start_date = None, end_date = None):
     for fname in sorted(os.listdir("/content/roti/data/")):
         date = get_date_from_filename(fname)
         if date >= start_date and date < end_date:
-            _, lats, rows = read_roti("/content/roti/data/" + fname)
+            d, lats, rows = read_roti("/content/roti/data/" + fname)
+            assert date == d
             data[date] = rows
     return data
 
