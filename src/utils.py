@@ -1,7 +1,7 @@
 import os
 import numpy as np
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 def read_roti(fpath):
     with open(fpath, 'rb') as f:
@@ -44,4 +44,4 @@ def load_data(start_date = None, end_date = None):
 def get_date_from_filename(fname):
     doy = int(fname[4:7])
     year = 2000 + int(fname[9:11])
-    return datetime(year, 1, 1) + datetime.timedelta(doy - 1)
+    return datetime(year, 1, 1) + timedelta(days=doy - 1)
