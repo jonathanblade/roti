@@ -22,7 +22,7 @@ def get_model_config():
         ]
     }
 
-def add_layer(model, layer, use_normalization=True, use_activation=True):
+def add_layer(model, layer, use_normalization=False, use_activation=False):
     layer_name = layer[0]
     filters = layer[1]
     kernel_size = layer[2]
@@ -30,14 +30,14 @@ def add_layer(model, layer, use_normalization=True, use_activation=True):
     padding = layer[4]
 
     if (layer_name == "conv"):
-        model.add(ZeroPadding2D(padding=padding))
-        model.add(Conv2D(filters=filters, kernel_size=kernel_size, strides=strides, padding="valid"))
+        # model.add(ZeroPadding2D(padding=padding))
+        model.add(Conv2D(filters=filters, kernel_size=kernel_size, strides=strides, padding="same"))
     if (layer_name == "convLSTM"):
-        model.add(ZeroPadding2D(padding=padding))
-        model.add(ConvLSTM2D(filters=filters, kernel_size=kernel_size, strides=strides, padding="valid"))
+        # model.add(ZeroPadding2D(padding=padding))
+        model.add(ConvLSTM2D(filters=filters, kernel_size=kernel_size, strides=strides, padding="same", return_sequences=True))
     if (layer_name == "deconv"):
-        model.add(ZeroPadding2D(padding=padding))
-        model.add(Conv2DTranspose(filters=filters, kernel_size=kernel_size, strides=strides, padding="valid"))
+        # model.add(ZeroPadding2D(padding=padding))
+        model.add(Conv2DTranspose(filters=filters, kernel_size=kernel_size, strides=strides, padding="same"))
 
     if use_normalization:
         model.add(BatchNormalization())
@@ -50,12 +50,12 @@ def add_layer(model, layer, use_normalization=True, use_activation=True):
 def build_model(input_shape):
     config = get_model_config()
 
-    encoder = Sequential()
+    encoder = Sequential(name="Encoder")
     encoder.add(InputLayer(input_shape=input_shape))
     for layer in config["encoder"]:
         encoder = add_layer(encoder, layer)
 
-    decoder = Sequential()
+    decoder = Sequential(name="Decoder")
     decoder.add(InputLayer(input_shape=encoder.layers[-1].output_shape))
     for layer in config["decoder"]:
         decoder = add_layer(decoder, layer)
