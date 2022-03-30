@@ -1,5 +1,5 @@
 from keras.models import Sequential
-from keras.layers import InputLayer, Conv2D, Conv2DTranspose, ConvLSTM2D, BatchNormalization, LeakyReLU
+from keras.layers import InputLayer, Conv2D, Conv2DTranspose, ConvLSTM2D, BatchNormalization, LeakyReLU, ZeroPadding2D
 
 def get_model_config():
     return {
@@ -30,11 +30,14 @@ def add_layer(model, layer, use_normalization=True, use_activation=True):
     padding = layer[4]
 
     if (layer_name == "conv"):
-        model.add(Conv2D(filters=filters, kernel_size=kernel_size, strides=strides, padding=padding))
+        model.add(ZeroPadding2D(padding=padding))
+        model.add(Conv2D(filters=filters, kernel_size=kernel_size, strides=strides, padding="valid"))
     if (layer_name == "convLSTM"):
-        model.add(ConvLSTM2D(filters=filters, kernel_size=kernel_size, strides=strides, padding=padding))
+        model.add(ZeroPadding2D(padding=padding))
+        model.add(ConvLSTM2D(filters=filters, kernel_size=kernel_size, strides=strides, padding="valid"))
     if (layer_name == "deconv"):
-        model.add(Conv2DTranspose(filters=filters, kernel_size=kernel_size, strides=strides, padding=padding))
+        model.add(ZeroPadding2D(padding=padding))
+        model.add(Conv2DTranspose(filters=filters, kernel_size=kernel_size, strides=strides, padding="valid"))
 
     if use_normalization:
         model.add(BatchNormalization())
@@ -56,5 +59,8 @@ def build_model(input_shape):
     decoder.add(InputLayer(input_shape=encoder.layers[-1].output_shape))
     for layer in config["decoder"]:
         decoder = add_layer(decoder, layer)
+
+    encoder.summary()
+    decoder.summary()
 
     return (encoder, decoder)
