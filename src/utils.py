@@ -54,3 +54,14 @@ def create_seq(data, window):
         X.append(data[i:(i+window)])
         Y.append(data[i+window])
     return np.array(X), np.array(Y)
+
+def prepare_data(start_date, end_date, window, train_size=0.9):
+    data = load_data(start_date, end_date)
+    data = list(data.values())
+    X, Y = create_seq(data, window)
+    train_size = int(len(Y) * train_size)
+    train_X = X[0:train_size]
+    train_Y = Y[0:train_size]
+    test_X = X[train_size:]
+    test_Y = Y[train_size:]
+    return train_X, train_Y, test_X, test_Y
