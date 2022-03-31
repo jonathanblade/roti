@@ -4,7 +4,7 @@ from keras.layers import Input, Conv2D, Conv2DTranspose, ConvLSTM2D, BatchNormal
 
 class LeiLiuAE(Model):
     def __init__(self, input_shape):
-        super(LeiLiuAE, self).__init__(name="Lei Liu AE")
+        super(LeiLiuAE, self).__init__()
         self.encoder = self._build_encoder(input_shape)
         encoder_shape = self.encoder.layers[-1].output_shape
         self.decoder = self._build_decoder(encoder_shape)
