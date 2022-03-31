@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import pandas as pd
 
 from datetime import datetime, timedelta
 
@@ -40,7 +41,8 @@ def load_data(start_date = None, end_date = None):
             d, lats, rows = read_roti("/content/roti/data/" + fname)
             assert date == d
             data[date] = rows
-    return data
+    df = pd.DataFrame.from_dict(data, orient="index", columns=["ROTI"])
+    return df
 
 def get_date_from_filename(fname):
     doy = int(fname[4:7])
