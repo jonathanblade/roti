@@ -1,9 +1,20 @@
-from keras import Model
-from keras.models import Sequential
-from keras.layers import Input, Conv2D, Conv2DTranspose, ConvLSTM2D, BatchNormalization, LeakyReLU, ZeroPadding2D, TimeDistributed
+from tensorflow import GradientTape
+from tensorflow.keras import Model
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.losses import mean_absolute_error
+from tensorflow.keras.layers import (
+    BatchNormalization,
+    Conv2D,
+    Conv2DTranspose,
+    ConvLSTM2D,
+    Input,
+    LeakyReLU,
+    TimeDistributed,
+    ZeroPadding2D,
+)
 
 class LeiLiuAE(Model):
-    def __init__(self, input_shape):
+    def __init__(self, input_shape=(3, 20, 180, 1)):
         super(LeiLiuAE, self).__init__()
         self.encoder = self._build_encoder(input_shape)
         encoder_shape = self.encoder.layers[-1].output_shape
@@ -13,6 +24,21 @@ class LeiLiuAE(Model):
         x = self.encoder(x)
         x = self.decoder(x)
         return x
+
+    def train_step(self, data):
+        x, y = data
+        with GradientTape() as tape:
+            middle_map = x[1:2,:,:,:]
+            pred_map = self(middle_map, training=True)
+            # Compute loss
+            loss = mean_absolute_error(pred_map, middle_map)
+        # Compute gradients
+        gradients = tape.gradient(loss, self.trainable_variables)
+        # Update weights
+        self.optimizer.apply_gradients(zip(gradients, self.trainable_variables))
+        # Update metrics
+        self.compiled_metrics.update_state(y, pred_map)
+        return {m.name: m.result() for m in self.metrics}
 
     @property
     def config(self):
@@ -66,7 +92,7 @@ class LeiLiuAE(Model):
         encoder.add(Input(shape=input_shape))
         for layer in self.config.get("encoder"):
             encoder = self._add_layer(encoder, layer)
-        encoder.summary()
+        # encoder.summary()
         return encoder
 
     def _build_decoder(self, input_shape):
@@ -74,5 +100,5 @@ class LeiLiuAE(Model):
         decoder.add(Input(shape=input_shape[1:]))
         for layer in self.config.get("decoder"):
             decoder = self._add_layer(decoder, layer)
-        decoder.summary()
+        # decoder.summary()
         return decoder
