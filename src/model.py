@@ -66,6 +66,7 @@ class LeiLiuAE(Model):
         encoder.add(Input(shape=input_shape))
         for layer in self.config.get("encoder"):
             encoder = self._add_layer(encoder, layer)
+        encoder.summary()
         return encoder
 
     def _build_decoder(self, input_shape):
@@ -73,4 +74,5 @@ class LeiLiuAE(Model):
         decoder.add(Input(shape=input_shape[1:]))
         for layer in self.config.get("decoder"):
             decoder = self._add_layer(decoder, layer)
+        decoder.summary()
         return decoder
