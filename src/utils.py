@@ -30,7 +30,7 @@ def read_roti(fpath):
         return date, np.array(lats), np.array(rows)
 
 def load_data(start_date = None, end_date = None):
-    data = {}
+    data = []
     if start_date is None:
         start_date = datetime(2010, 1, 1)
     if end_date is None:
@@ -40,8 +40,8 @@ def load_data(start_date = None, end_date = None):
         if date >= start_date and date < end_date:
             d, lats, rows = read_roti("/content/roti/data/" + fname)
             assert date == d
-            data[date] = rows
-    df = pd.DataFrame.from_dict(data, orient="index", columns=["ROTI"])
+            data.append({"date": date, "ROTI": rows})
+    df = pd.DataFrame.from_records(data, index="date")
     return df
 
 def get_date_from_filename(fname):
