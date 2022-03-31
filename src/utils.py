@@ -46,3 +46,11 @@ def get_date_from_filename(fname):
     doy = int(fname[4:7])
     year = 2000 + int(fname[9:11])
     return datetime(year, 1, 1) + timedelta(days=doy - 1)
+
+def create_seq(data, window):
+    X = []
+    Y = []
+    for i in range(len(data)-window-1):
+        X.append(data[i:(i+window)])
+        Y.append(data[i+window])
+    return np.array(X), np.array(Y)
