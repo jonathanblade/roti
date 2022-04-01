@@ -50,7 +50,7 @@ def get_date_from_filename(fname):
     year = 2000 + int(fname[9:11])
     return datetime(year, 1, 1) + timedelta(days=doy - 1)
 
-def plot_roti(data):
+def plot_roti(data, date):
     plt.rcParams["font.size"] = 16
     plt.rcParams["figure.figsize"] = (8, 8)
     plt.rcParams["figure.dpi"] = 300
@@ -62,7 +62,7 @@ def plot_roti(data):
     fig = plt.figure()
     ax = fig.add_subplot(projection="polar")
 
-    ax.set_title(self.DATE.strftime("%d %B %Y"))
+    ax.set_title(date.strftime("%d %B %Y"))
     ax.set_theta_zero_location("S")
     ax.set_xticklabels(["00 MLT", "", "06", "", "12", "", "18", ""])
     ax.set_rgrids([90, 80, 70, 60, 50], angle=135)
