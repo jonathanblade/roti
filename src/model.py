@@ -83,5 +83,6 @@ def train(model, train_generator, epochs):
     for epoch in range(1, epochs + 1):
         print(f"Epoch: {epoch}")
         for train_x, train_y in train_generator:
+            print(f"X shape: {train_x.shape}, Y shape: {train_y.shape}")
             update_weights(model, train_x, train_y)
     return model
