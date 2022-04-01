@@ -30,7 +30,7 @@ def read_roti(fpath):
             line = f.readline()
         return date, np.array(lats), np.array(rows)
 
-def load_data(start_date = None, end_date = None):
+def load_data(start_date=None, end_date=None):
     data = []
     if start_date is None:
         start_date = datetime(2010, 1, 1)
@@ -56,8 +56,8 @@ def plot_roti(data, date):
     plt.rcParams["figure.dpi"] = 300
     plt.rcParams["savefig.bbox"] = "tight"
 
-    MLON = np.linspace(0, 360, 180)
-    MLAT = np.linspace(90, 50, 20)
+    mlon = np.linspace(0, 360, 180)
+    mlat = np.linspace(90, 50, 20)
 
     fig = plt.figure()
     ax = fig.add_subplot(projection="polar")
@@ -68,7 +68,7 @@ def plot_roti(data, date):
     ax.set_rgrids([90, 80, 70, 60, 50], angle=135)
     ax.set_rlim(bottom=90, top=50)
 
-    theta, r = np.meshgrid(MLON, MLAT)
+    theta, r = np.meshgrid(mlon, mlat)
     cax = ax.contourf(
         np.deg2rad(theta),
         r,
