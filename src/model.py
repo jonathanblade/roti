@@ -31,7 +31,7 @@ class LeiLiuAE(Model):
             middle_map = x[1:2,:,:,:]
             pred_map = self(middle_map, training=True)
             # Compute loss
-            loss = mean_absolute_error(pred_map, middle_map)
+            loss = mean_absolute_error(y, pred_map)
         # Compute gradients
         gradients = tape.gradient(loss, self.trainable_variables)
         # Update weights
