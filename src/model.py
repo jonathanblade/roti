@@ -79,6 +79,7 @@ def update_weights(model, optimizer, x, y):
 
 def train_loop(model, optimizer, train_generator, epochs):
     for epoch in range(1, epochs + 1):
+        print(f"Epoch: {epoch}")
         for train_x, train_y in train_generator:
             update_weights(model, optimizer, train_x, train_y)
     return model
