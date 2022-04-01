@@ -59,7 +59,7 @@ def add_layer(model, layer, use_normalization=False, use_activation=False):
     return model
 
 def build_model(input_shape=(3, 20, 180, 1)):
-    model = Sequential(name="Lei Liu AE")
+    model = Sequential(name="LeiLiuAE")
     model.add(Input(shape=input_shape))
     for layer in CONFIG.get("encoder"):
         model = add_layer(model, layer)
