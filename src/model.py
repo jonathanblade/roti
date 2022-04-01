@@ -1,6 +1,7 @@
 from tensorflow import GradientTape
 from tensorflow.keras import Model
 from tensorflow.keras.models import Sequential
+from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.losses import mean_absolute_error
 from tensorflow.keras.layers import (
     BatchNormalization,
@@ -65,9 +66,10 @@ def build_model(input_shape=(3, 20, 180, 1)):
         model = add_layer(model, layer)
     for layer in CONFIG.get("decoder"):
         model = add_layer(model, layer)
+    model.compile(optimizer=Adam(1e-3))
     return model
 
-def update_weights(model, optimizer, x, y):
+def update_weights(model, x, y):
     with GradientTape() as tape:
         pred_y = model(x)[0,0:1,:,:,0]
         # Compute loss
@@ -75,11 +77,11 @@ def update_weights(model, optimizer, x, y):
     # Compute gradients
     gradients = tape.gradient(loss, model.trainable_variables)
     # Update weights
-    optimizer.apply_gradients(zip(gradients, model.trainable_variables))
+    model.optimizer.apply_gradients(zip(gradients, model.trainable_variables))
 
-def train_loop(model, optimizer, train_generator, epochs):
+def train(model, train_generator, epochs):
     for epoch in range(1, epochs + 1):
         print(f"Epoch: {epoch}")
         for train_x, train_y in train_generator:
-            update_weights(model, optimizer, train_x, train_y)
+            update_weights(model, train_x, train_y)
     return model
