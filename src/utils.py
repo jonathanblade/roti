@@ -45,6 +45,7 @@ def load_data(start_date=None, end_date=None):
     start_date: datetime (included)
     end_date: datetime (not included)
     '''
+    gfz = read_gfz()
     data = []
     if start_date is None:
         start_date = datetime(2010, 1, 1)
@@ -61,6 +62,7 @@ def load_data(start_date=None, end_date=None):
             assert date == d
             data.append({"date": date, "ROTI": rows})
     df = pd.DataFrame.from_records(data, index="date")
+    df = df.join(gfz)
     return df
 
 def get_date_from_filename(fname):

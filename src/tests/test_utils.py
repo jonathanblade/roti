@@ -25,7 +25,7 @@ class TestUtils(TestCase):
 
     def test_load_data(self):
         data = load_data(datetime(2010, 1, 1), datetime(2010, 1, 3))
-        self.assertEqual(data.shape, (2, 1))
+        self.assertEqual(data.shape, (2, 26))
         self.assertEqual(list(data.index), [datetime(2010, 1, 1), datetime(2010, 1, 2)])
 
         self.assertRaises(ValueError, load_data, datetime(2010, 1, 3), datetime(2010, 1, 1))
