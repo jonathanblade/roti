@@ -5,6 +5,7 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.losses import mean_absolute_error
 from tensorflow.keras.layers import (
     BatchNormalization,
+    Bidirectional,
     Conv2D,
     Conv2DTranspose,
     ConvLSTM2D,
@@ -46,7 +47,7 @@ def add_layer(model, layer, use_normalization=False, use_activation=False):
         model.add(TimeDistributed(Conv2D(filters=filters, kernel_size=kernel_size, strides=strides, padding="same")))
     if (layer_name == "convLSTM"):
         # model.add(TimeDistributed(ZeroPadding2D(padding=padding)))
-        model.add(ConvLSTM2D(filters=filters, kernel_size=kernel_size, strides=strides, padding="same", return_sequences=True))
+        model.add(Bidirectional(ConvLSTM2D(filters=filters, kernel_size=kernel_size, strides=strides, padding="same", return_sequences=True)))
     if (layer_name == "deconv"):
         # model.add(TimeDistributed(ZeroPadding2D(padding=padding)))
         model.add(TimeDistributed(Conv2DTranspose(filters=filters, kernel_size=kernel_size, strides=strides, padding="same")))
