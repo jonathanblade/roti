@@ -39,6 +39,7 @@ def read_gfz():
                                 df["DD"].astype(str).str.zfill(2),
                                 format="%Y%m%d"
                                 )
+    df = df.drop(columns=["YYYY", "MM", "DD"])
     df = df.set_index("date")
     return df
 
