@@ -33,10 +33,12 @@ def read_roti(fpath):
         return date, np.array(lats), np.array(rows)
 
 def read_gfz():
-    df = pd.read_csv(CONTENT_DIR + "GFZ.csv",
-                     parse_dates={"date": ["YYYY", "MM", "DD"]},
-                     date_parser=lambda y, m, d: datetime.strptime(y + m.zfill(2) + d.zfill(2), "%Y%m%d")
-                     )
+    df = pd.read_csv(CONTENT_DIR + "GFZ.csv")
+    df["date"] = pd.to_datetime(df["YYYY"].astype(str) + \
+                                df["MM"].astype(str).str.zfill(2) + \
+                                df["DD"].astype(str).str.zfill(2),
+                                format="%Y%m%d"
+                                )
     df = df.set_index("date")
     return df
 
