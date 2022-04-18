@@ -45,4 +45,6 @@ class TestUtils(TestCase):
         data_2010_01_01 = data.loc[datetime(2010, 1, 1)]
         self.assertEqual(data_2010_01_01["F10.7obs"], 75.2)
         data_2013_01_25 = data.loc[datetime(2013, 1, 25)]
-        self.assertEqual(data_2013_01_25["D"], 5.2)
+        self.assertEqual(data_2013_01_25["D"], 2.0)
+        data_2020_11_19 = data.loc[datetime(2020, 11, 19)]
+        self.assertEqual(data_2020_11_19["days"], 32465.0)
