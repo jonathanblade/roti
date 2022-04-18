@@ -2,7 +2,7 @@ from tensorflow import GradientTape
 from tensorflow.keras import Model
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.losses import CategoricalHinge
+from tensorflow.keras.losses import mean_absolute_error
 from tensorflow.keras.layers import (
     BatchNormalization,
     Conv2D,
@@ -69,20 +69,19 @@ def build_model(input_shape=(3, 20, 180, 1)):
     model.compile(optimizer=Adam(1e-3))
     return model
 
-def update_weights(model, loss_fn, x, y):
+def update_weights(model, x, y):
     with GradientTape() as tape:
         pred_y = model(x)[0,0:1,:,:,0]
         # Compute loss
-        loss = loss_fn(y, pred_y)
+        loss = mean_absolute_error(y, pred_y)
     # Compute gradients
     gradients = tape.gradient(loss, model.trainable_variables)
     # Update weights
     model.optimizer.apply_gradients(zip(gradients, model.trainable_variables))
 
 def train(model, train_generator, epochs):
-    loss_fn = CategoricalHinge()
     for epoch in range(1, epochs + 1):
         print(f"Epoch: {epoch}")
         for train_x, train_y in train_generator:
-            update_weights(model, loss_fn, train_x, train_y)
+            update_weights(model, train_x, train_y)
     return model
