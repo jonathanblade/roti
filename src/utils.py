@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 
 from datetime import datetime, timedelta
 
+CONTENT_DIR = "/content/roti/"
+
 def read_roti(fpath):
     with open(fpath, 'rb') as f:
         header_read = False
@@ -30,6 +32,14 @@ def read_roti(fpath):
             line = f.readline()
         return date, np.array(lats), np.array(rows)
 
+def read_gfz():
+    df = pd.read_csv(CONTENT_DIR + "GFZ.csv",
+                     parse_dates={"date": ["YYYY", "MM", "DD"]},
+                     date_parser=lambda y, m, d: datetime.strptime(y + m + d, "%Y%m%d")
+                     )
+    df = df.set_index("date")
+    return df
+
 def load_data(start_date=None, end_date=None):
     '''
     start_date: datetime (included)
@@ -42,12 +52,12 @@ def load_data(start_date=None, end_date=None):
         end_date = datetime.now()
     if start_date >= end_date:
         raise ValueError("Start date shoud be less than end date.")
-    for fname in sorted(os.listdir("/content/roti/data/"), key=lambda x: (int(x[9:11]), int(x[4:8]))):
+    for fname in sorted(os.listdir(CONTENT_DIR + "data"), key=lambda x: (int(x[9:11]), int(x[4:8]))):
         date = get_date_from_filename(fname)
         if date >= end_date:
             break
         if date >= start_date:
-            d, lats, rows = read_roti("/content/roti/data/" + fname)
+            d, lats, rows = read_roti(CONTENT_DIR + "data" + "/" + fname)
             assert date == d
             data.append({"date": date, "ROTI": rows})
     df = pd.DataFrame.from_records(data, index="date")

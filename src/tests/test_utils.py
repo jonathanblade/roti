@@ -3,7 +3,7 @@ import numpy as np
 from datetime import datetime
 from unittest import TestCase
 
-from ..utils import read_roti, load_data, get_date_from_filename
+from ..utils import read_roti, load_data, get_date_from_filename, read_gfz
 
 class TestUtils(TestCase):
 
@@ -39,3 +39,10 @@ class TestUtils(TestCase):
 
         date = get_date_from_filename("roti1920.20f")
         self.assertEqual(date, datetime(2020, 7, 10))
+
+    def test_read_gfz(self):
+        data = read_gfz()
+        data_2010_01_01 = data.loc[datetime(2010, 1, 1)]
+        self.assertEqual(data_2010_01_01["F10.7obs"], 75.2)
+        data_2013_01_25 = data.loc[datetime(2013, 1, 25)]
+        self.assertEqual(data_2013_01_25["D"], 5.2)
