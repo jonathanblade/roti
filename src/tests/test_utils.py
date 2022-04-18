@@ -28,6 +28,8 @@ class TestUtils(TestCase):
         self.assertEqual(data.shape, (2, 1))
         self.assertEqual(list(data.index), [datetime(2010, 1, 1), datetime(2010, 1, 2)])
 
+        self.assertRaises(ValueError, load_data, datetime(2010, 1, 3), datetime(2010, 1, 1))
+
     def test_get_date_from_filename(self):
         date = get_date_from_filename("roti0010.10f")
         self.assertEqual(date, datetime(2010, 1, 1))

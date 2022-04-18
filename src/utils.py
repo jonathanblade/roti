@@ -31,14 +31,22 @@ def read_roti(fpath):
         return date, np.array(lats), np.array(rows)
 
 def load_data(start_date=None, end_date=None):
+    '''
+    start_date: datetime (included)
+    end_date: datetime (not included)
+    '''
     data = []
     if start_date is None:
         start_date = datetime(2010, 1, 1)
     if end_date is None:
         end_date = datetime.now()
-    for fname in sorted(os.listdir("/content/roti/data/")):
+    if start_date >= end_date:
+        raise ValueError("Start date shoud be less than end date.")
+    for fname in sorted(os.listdir("/content/roti/data/"), key=lambda x: (int(x[9:11]), int(x[4:8]))):
         date = get_date_from_filename(fname)
-        if date >= start_date and date < end_date:
+        if date >= end_date:
+            break
+        if date >= start_date:
             d, lats, rows = read_roti("/content/roti/data/" + fname)
             assert date == d
             data.append({"date": date, "ROTI": rows})
