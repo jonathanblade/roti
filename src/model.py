@@ -4,15 +4,11 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.losses import mean_absolute_error
 from tensorflow.keras.layers import (
-    BatchNormalization,
-    Bidirectional,
     Conv2D,
     Conv2DTranspose,
     ConvLSTM2D,
     Input,
-    LeakyReLU,
     TimeDistributed,
-    ZeroPadding2D,
 )
 
 CONFIG = {
@@ -35,7 +31,7 @@ CONFIG = {
     ],
 }
 
-def add_layer(model, layer, use_normalization=False, use_activation=False):
+def add_layer(model, layer):
     layer_name = layer[0]
     filters = layer[1]
     kernel_size = layer[2]
@@ -43,20 +39,11 @@ def add_layer(model, layer, use_normalization=False, use_activation=False):
     padding = layer[4]
 
     if (layer_name == "conv"):
-        # model.add(TimeDistributed(ZeroPadding2D(padding=padding)))
         model.add(TimeDistributed(Conv2D(filters=filters, kernel_size=kernel_size, strides=strides, padding="same")))
     if (layer_name == "convLSTM"):
-        # model.add(TimeDistributed(ZeroPadding2D(padding=padding)))
-        model.add(Bidirectional(ConvLSTM2D(filters=filters, kernel_size=kernel_size, strides=strides, padding="same", return_sequences=True)))
+        model.add(ConvLSTM2D(filters=filters, kernel_size=kernel_size, strides=strides, padding="same", return_sequences=True))
     if (layer_name == "deconv"):
-        # model.add(TimeDistributed(ZeroPadding2D(padding=padding)))
         model.add(TimeDistributed(Conv2DTranspose(filters=filters, kernel_size=kernel_size, strides=strides, padding="same")))
-
-    if use_normalization:
-        model.add(BatchNormalization())
-
-    if use_activation:
-        model.add(LeakyReLU())
 
     return model
 
@@ -67,14 +54,16 @@ def build_model(input_shape=(3, 20, 180, 1)):
         model = add_layer(model, layer)
     for layer in CONFIG.get("decoder"):
         model = add_layer(model, layer)
-    model.compile(optimizer=Adam(1e-3))
+    optimizer = Adam(1e-3)
+    model.compile(loss='mse', optimizer=optimizer)
     return model
 
 def update_weights(model, x, y):
     with GradientTape() as tape:
-        pred_y = model(x)[0,0:1,:,:,0]
+        pred_y = model(x)
         # Compute loss
         loss = mean_absolute_error(y, pred_y)
+        print(f"Loss: {loss}")
     # Compute gradients
     gradients = tape.gradient(loss, model.trainable_variables)
     # Update weights
