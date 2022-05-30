@@ -63,7 +63,6 @@ def update_weights(model, x, y):
         pred_y = model(x)
         # Compute loss
         loss = mean_absolute_error(y, pred_y)
-        print(f"Loss: {loss}")
     # Compute gradients
     gradients = tape.gradient(loss, model.trainable_variables)
     # Update weights

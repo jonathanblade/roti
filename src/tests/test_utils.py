@@ -3,7 +3,7 @@ import numpy as np
 from datetime import datetime
 from unittest import TestCase
 
-from ..utils import read_roti, load_data, get_date_from_filename, read_gfz
+from ..utils import read_roti, load_data, read_gfz
 
 class TestUtils(TestCase):
 
@@ -29,16 +29,6 @@ class TestUtils(TestCase):
         self.assertEqual(list(data.index), [datetime(2010, 1, 1), datetime(2010, 1, 2)])
 
         self.assertRaises(ValueError, load_data, datetime(2010, 1, 3), datetime(2010, 1, 1))
-
-    def test_get_date_from_filename(self):
-        date = get_date_from_filename("roti0010.10f")
-        self.assertEqual(date, datetime(2010, 1, 1))
-
-        date = get_date_from_filename("roti1970.13f")
-        self.assertEqual(date, datetime(2013, 7, 16))
-
-        date = get_date_from_filename("roti1920.20f")
-        self.assertEqual(date, datetime(2020, 7, 10))
 
     def test_read_gfz(self):
         data = read_gfz()

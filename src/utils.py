@@ -56,22 +56,13 @@ def load_data(start_date=None, end_date=None):
         end_date = datetime.now()
     if start_date >= end_date:
         raise ValueError("Start date shoud be less than end date.")
-    for fname in sorted(os.listdir(CONTENT_DIR + "data"), key=lambda x: (int(x[9:11]), int(x[4:8]))):
-        date = get_date_from_filename(fname)
-        if date >= end_date:
-            break
-        if date >= start_date:
-            d, lats, rows = read_roti(CONTENT_DIR + "data" + "/" + fname)
-            assert date == d
+    for fname in os.listdir(CONTENT_DIR + "data"):
+        date, lats, rows = read_roti(CONTENT_DIR + "data" + "/" + fname)
+        if date >= start_date and date < end_date:
             data.append({"date": date, "ROTI": rows})
-    df = pd.DataFrame.from_records(data, index="date")
+    df = pd.DataFrame.from_records(data, index="date").sort_index()
     df = df.join(gfz)
     return df
-
-def get_date_from_filename(fname):
-    doy = int(fname[4:7])
-    year = 2000 + int(fname[9:11])
-    return datetime(year, 1, 1) + timedelta(days=doy - 1)
 
 def plot_roti(data, date):
     plt.rcParams["font.size"] = 16
