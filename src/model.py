@@ -1,6 +1,8 @@
+import os
+
 from tensorflow import GradientTape
 from tensorflow.keras import Model
-from tensorflow.keras.models import Sequential
+from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.losses import mean_absolute_error
 from tensorflow.keras.layers import (
@@ -10,6 +12,8 @@ from tensorflow.keras.layers import (
     Input,
     TimeDistributed,
 )
+
+CHECKPOINT_DIR = "/content/roti/checkpoints"
 
 CONFIG = {
     "encoder": [
@@ -68,9 +72,25 @@ def update_weights(model, x, y):
     # Update weights
     model.optimizer.apply_gradients(zip(gradients, model.trainable_variables))
 
+def pretrain(model):
+    if not os.path.exists(CHECKPOINT_DIR):
+        os.makedirs(CHECKPOINT_DIR)
+    checkpoints = os.listdir(CHECKPOINT_DIR)
+    print(f"Checkpoints: {checkpoints}")
+    if len(checkpoints) > 0:
+        latest_checkpoint = sorted(checkpoints)[-1]
+        print(f"Latest checkpoint: {latest_checkpoint}")
+        latest_epoch = int(latest_checkpoint[6:8])
+        print(f"Latest epoch: {latest_epoch}")
+        model = load_model(os.path.join(CHECKPOINT_DIR, latest_checkpoint))
+        return model, latest_epoch + 1
+    return model, 1
+
 def train(model, train_generator, epochs):
-    for epoch in range(1, epochs + 1):
+    model, latest_epoch = pretrain(model)
+    for epoch in range(latest_epoch, epochs + 1):
         print(f"Epoch: {epoch}")
         for train_x, train_y in train_generator:
             update_weights(model, train_x, train_y)
+        model.save(os.path.join(CHECKPOINT_DIR, "epoch-{:02d}.h5".format(epoch)))
     return model
