@@ -64,7 +64,7 @@ def load_data(start_date=None, end_date=None):
     df = df.join(gfz)
     return df
 
-def plot_roti(data, date):
+def plot_roti(data, title):
     plt.rcParams["font.size"] = 16
     plt.rcParams["figure.figsize"] = (8, 8)
     plt.rcParams["figure.dpi"] = 300
@@ -76,7 +76,8 @@ def plot_roti(data, date):
     fig = plt.figure()
     ax = fig.add_subplot(projection="polar")
 
-    ax.set_title(date.strftime("%d %B %Y"))
+    if isinstance(title, datetime):
+        ax.set_title(date.strftime("%d %B %Y"))
     ax.set_theta_zero_location("S")
     ax.set_xticklabels(["00 MLT", "", "06", "", "12", "", "18", ""])
     ax.set_rgrids([90, 80, 70, 60, 50], angle=135)
